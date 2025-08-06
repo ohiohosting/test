@@ -1,381 +1,1106 @@
---[[ 
-    HexWare – Combat Surf (Silent-Aim + ESP + Wall-Bang) with R15 support
-    Author: @0nehex, mod: ChatGPT | Updated: 2025-08-06
-]]
+-- Roblox Weapon Skins Table (ready for use)
+local SkinsConfig = {}
 
----------------------------------------------------------------------
--- ▶ SERVICES
----------------------------------------------------------------------
+SkinsConfig.skins = {
+    ["Default"] = { type = "colour", colour = Color3.fromRGB(17,17,17), text = "Default" },
+    ["Laser"]   = { type = "image",  image_id = 11693802768,   text = "Laser" },
+    ["Impietas"] = { type = "image", image_id = 11697285979,  text = "Impietas" },
+    ["Heejin"]  = { type = "image",  image_id = 98760773720940, text = "Heejin" },
+    ["Yellow Camo"]  = { type = "image", image_id = 10990220398, text = "Yellow Camo" },
+    ["Black Camo"]   = { type = "image", image_id = 10990250566, text = "Black Camo" },
+    ["Pink Camo"]    = { type = "image", image_id = 10990288306, text = "Pink Camo" },
+    ["Red Camo"]     = { type = "image", image_id = 10990253858, text = "Red Camo" },
+    ["Green Camo"]   = { type = "image", image_id = 10990263482, text = "Green Camo" },
+    ["Blue Camo"]    = { type = "image", image_id = 10990270844, text = "Blue Camo" },
+    ["Camoflage"]    = { type = "image", image_id = 10990282017, text = "Camouflage" },
+    ["Orange Camo"]  = { type = "image", image_id = 10990258542, text = "Orange Camo" },
+    ["Desert Camo"]  = { type = "image", image_id = 10990275722, text = "Desert Camo" },
+    ["Sparkle Green"]  = { type = "image", image_id = 10990102141, text = "Sparkle Green" },
+    ["Sparkle Orange"] = { type = "image", image_id = 10990111547, text = "Sparkle Orange" },
+    ["Sparkle Blue"]   = { type = "image", image_id = 10990120455, text = "Sparkle Blue" },
+    ["Sparkle Pink"]   = { type = "image", image_id = 10990139277, text = "Sparkle Pink" },
+    ["Sparkle Cyan"]   = { type = "image", image_id = 10990145621, text = "Sparkle Cyan" },
+    ["Sparkle Yellow"] = { type = "image", image_id = 10990151498, text = "Sparkle Yellow" },
+    ["Sparkle Purple"] = { type = "image", image_id = 10990156689, text = "Sparkle Purple" },
+    ["Sparkle Red"]    = { type = "image", image_id = 10990160910, text = "Sparkle Red" },
+    ["Gold Skin"]   = { type = "colour", colour = Color3.fromRGB(239,184,56), text = "Gold" },
+    ["Really blue"] = { type = "colour", colour = Color3.fromRGB(0,0,255),     text = "Blue" },
+    ["Toothpaste"]  = { type = "colour", colour = Color3.fromRGB(0,255,255),   text = "Cyan" },
+    ["Bright green"]= { type = "colour", colour = Color3.fromRGB(0,255,0),     text = "Green" },
+    ["Deep orange"] = { type = "colour", colour = Color3.fromRGB(255,176,0),   text = "Orange" },
+    ["Hot pink"]    = { type = "colour", colour = Color3.fromRGB(255,0,191),   text = "Pink" },
+    ["Royal purple"]= { type = "colour", colour = Color3.fromRGB(98,37,209),   text = "Purple" },
+    ["Really red"]  = { type = "colour", colour = Color3.fromRGB(255,0,0),     text = "Red" },
+    ["Institutional white"] = { type = "colour", colour = Color3.fromRGB(248,248,248), text = "White" }
+}
+
+-- single reference
+local weaponSkins = SkinsConfig.skins
+
+-- sorted list of names
+local skinNames = {}
+for name in pairs(weaponSkins) do table.insert(skinNames, name) end
+table.sort(skinNames)
+
+
+pcall(function() game.CoreGui.FatalityWin:Destroy() end)
+local sg = Instance.new("ScreenGui", game:GetService("CoreGui"))
+sg.Name = "FatalityWin"
+sg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local bgCol      = Color3.fromRGB(28,23,44)
+local sectionCol = Color3.fromRGB(38,33,54)
+local accent     = Color3.fromRGB(217,42,111)
+local textCol    = Color3.fromRGB(230,225,250)
+local subText    = Color3.fromRGB(150,140,160)
+
+-- Main UI Frame
+local main = Instance.new("Frame", sg)
+main.Size = UDim2.new(0,900,0,480)
+main.Position = UDim2.new(0.5, -450, 0.5, -240)
+main.BackgroundColor3 = bgCol
+main.BorderSizePixel = 0
+
+local top = Instance.new("Frame", main)
+top.Size = UDim2.new(1,0,0,46)
+top.BackgroundColor3 = sectionCol
+top.BorderSizePixel = 0
+
+local title = Instance.new("TextLabel", top)
+title.Text = "FATALITY"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 23
+title.TextColor3 = accent
+title.BackgroundTransparency = 1
+title.Position = UDim2.new(0,14,0,8)
+title.Size = UDim2.new(0,150,0,28)
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+local tabs = {"RAGE","LEGIT","VISUALS","MISC","SKINS"}
+local current = 1
+local btns = {}
+for i,v in ipairs(tabs) do
+    local btn = Instance.new("TextButton", top)
+    btn.Text = v
+    btn.Font = Enum.Font.GothamSemibold
+    btn.TextSize = 17
+    btn.BackgroundTransparency = 1
+    btn.TextColor3 = (i == current and accent or subText)
+    btn.Position = UDim2.new(0,165+(i-1)*90,0,12)
+    btn.Size = UDim2.new(0,85,0,24)
+    btn.TextXAlignment = Enum.TextXAlignment.Left
+    table.insert(btns, btn)
+end
+
+local panel = Instance.new("Frame", main)
+panel.Position = UDim2.new(0,0,0,46)
+panel.Size = UDim2.new(1,0,1,-46)
+panel.BackgroundTransparency = 1
+local sections = {}
+
+local function clearSections()
+    for _,v in ipairs(sections) do v:Destroy() end
+    sections = {}
+end
+
+local function makeSection(parent, titleText, x, count)
+    local sectionW, totalW = 210, 225 * count - 15
+    local panelW = panel.AbsoluteSize.X > 0 and panel.AbsoluteSize.X or 900
+    local startX = (panelW - totalW) / 2
+    local sectionH = 340
+    local panelH = panel.AbsoluteSize.Y > 0 and panel.AbsoluteSize.Y or 434
+    local startY = (panelH - sectionH) / 2
+    local sec = Instance.new("Frame", parent)
+    sec.BackgroundColor3 = sectionCol
+    sec.BorderSizePixel = 0
+    sec.Size = UDim2.new(0, sectionW, 0, sectionH)
+    sec.Position = UDim2.new(0, startX + (x-1)*225, 0, startY)
+    table.insert(sections, sec)
+    local lbl = Instance.new("TextLabel", sec)
+    lbl.Text = titleText
+    lbl.Font = Enum.Font.GothamBold
+    lbl.TextSize = 17
+    lbl.TextColor3 = textCol
+    lbl.BackgroundTransparency = 1
+    lbl.Position = UDim2.new(0,12,0,10)
+    lbl.Size = UDim2.new(1,-24,0,24)
+    lbl.TextXAlignment = Enum.TextXAlignment.Left
+    return sec
+end
+
+----------------------------------------------------------
+-- Global State + Shared Libs
+----------------------------------------------------------
 local Players     = game:GetService("Players")
 local RunService  = game:GetService("RunService")
 local UserInput   = game:GetService("UserInputService")
 local Camera      = workspace.CurrentCamera
 local LocalPlayer = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local target = nil
 
----------------------------------------------------------------------
--- ▶ GLOBAL FLAGS
----------------------------------------------------------------------
-_G.HeadSize          = 20
-_G.HitboxEnabled     = false
-_G.HighlightEnabled  = false
-_G.TracerEnabled     = false
-_G.SkeletonEnabled   = false
-_G.SilentAimEnabled  = false
-_G.WallbangEnabled   = _G.WallbangEnabled or false
-_G.FOVRadius         = _G.FOVRadius or 100
-_G.UIPosition        = _G.UIPosition or UDim2.new(0.5,-210,0.5,-180)
-_G.SelectedBone      = _G.SelectedBone or "Head"
-_G.UIMinimized       = _G.UIMinimized or false
+-- LEGIT
+_G.LegitAimbotEnabled    = _G.LegitAimbotEnabled or false
+_G.MouseAimbotEnabled    = _G.MouseAimbotEnabled or false
+_G.LegitAimbotShowFOV    = _G.LegitAimbotShowFOV or false
+_G.LegitAimbotFOV        = _G.LegitAimbotFOV or 35
+_G.LegitAimbotSmooth     = _G.LegitAimbotSmooth or 10
+_G.LegitAimbotKey        = _G.LegitAimbotKey or Enum.UserInputType.MouseButton2
+_G.LegitAimbotKeyIdx     = _G.LegitAimbotKeyIdx or 1
 
----------------------------------------------------------------------
--- ▶ ESP STORAGE
----------------------------------------------------------------------
-local highlights, tracerLines, skeletonLines = {}, {}, {}
+-- TRIGGERBOT
+_G.TriggerbotEnabled     = _G.TriggerbotEnabled or false
+_G.TriggerbotKey         = _G.TriggerbotKey or Enum.UserInputType.MouseButton1
+_G.TriggerbotKeyIdx      = _G.TriggerbotKeyIdx or 2
+_G.TriggerbotDelay       = _G.TriggerbotDelay or 50
 
----------------------------------------------------------------------
--- ▶ FOV CIRCLE & CURRENT TARGET
----------------------------------------------------------------------
+-- RAGE
+_G.SilentAimEnabled    = _G.SilentAimEnabled or false
+_G.WallbangEnabled     = _G.WallbangEnabled or false
+_G.HighlightEnabled    = _G.HighlightEnabled or false
+_G.TracerEnabled       = _G.TracerEnabled or false
+_G.SkeletonEnabled     = _G.SkeletonEnabled or false
+_G.CornerBoxEnabled    = _G.CornerBoxEnabled or false
+_G.FOVRadius           = _G.FOVRadius or 100
+_G.HeadSize            = _G.HeadSize or 20
+_G.HitboxEnabled       = _G.HitboxEnabled or false
+_G.InfiniteAmmoEnabled = _G.InfiniteAmmoEnabled or false
+_G.RapidFireEnabled    = _G.RapidFireEnabled or false
+_G.SelectedBone        = _G.SelectedBone or "Head"
+
+----------------------------------------------------------
+-- RAGE/ESP/EXPLOITS LOGIC (FULL, not omitted)
+----------------------------------------------------------
+-- ESP drawing tables
+local highlights, tracerLines, skeletonLines, cornerBoxes = {}, {}, {}, {}
+
+-- RAGE FOV Circle, Target Dot, Hit Label
 local fovCircle = Drawing.new("Circle")
 fovCircle.Thickness = 1
-fovCircle.Color     = Color3.new(1,1,1)
+fovCircle.Color     = Color3.fromRGB(255,255,255)
 fovCircle.Radius    = _G.FOVRadius
 fovCircle.Filled    = false
 fovCircle.Visible   = false
 
-local target
+local targetDot = Drawing.new("Circle")
+targetDot.Radius   = 4
+targetDot.Filled   = true
+targetDot.Color    = Color3.fromRGB(255,0,0)
+targetDot.Visible  = false
 
----------------------------------------------------------------------
--- ▶ RIG-TYPE DETECTION & BONE LISTS
----------------------------------------------------------------------
-local function isR15(character)
-    local hum = character:FindFirstChildOfClass("Humanoid")
-    return hum and hum.RigType == Enum.HumanoidRigType.R15
-end
+local hitLabel = Drawing.new("Text")
+hitLabel.Size      = 16
+hitLabel.Center    = true
+hitLabel.Outline   = true
+hitLabel.Color     = Color3.fromRGB(255,255,255)
+hitLabel.Visible   = false
 
-local boneDefsR6 = {
-    Head         = {label="Head"},
-    Torso        = {label="Torso"},
-    ["Left Arm"]  = {label="Left Arm"},
-    ["Right Arm"] = {label="Right Arm"},
-    ["Left Leg"]  = {label="Left Leg"},
-    ["Right Leg"] = {label="Right Leg"},
-}
+-- LEGIT FOV Circle (for legit only)
+local legitFOVCircle = Drawing.new("Circle")
+legitFOVCircle.Color = accent
+legitFOVCircle.Filled = false
+legitFOVCircle.Thickness = 2
+legitFOVCircle.Radius = _G.LegitAimbotFOV or 35
+legitFOVCircle.Visible = false
 
-local boneDefsR15 = {
-    Head             = {label="Head"},
-    UpperTorso       = {label="UpperTorso"},
-    LowerTorso       = {label="LowerTorso"},
-    LeftUpperArm     = {label="LeftUpperArm"},
-    RightUpperArm    = {label="RightUpperArm"},
-    LeftLowerArm     = {label="LeftLowerArm"},
-    RightLowerArm    = {label="RightLowerArm"},
-    LeftUpperLeg     = {label="LeftUpperLeg"},
-    RightUpperLeg    = {label="RightUpperLeg"},
-    LeftLowerLeg     = {label="LeftLowerLeg"},
-    RightLowerLeg    = {label="RightLowerLeg"},
-}
-
----------------------------------------------------------------------
--- ▶ SILENT-AIM / WALL-BANG RAYCAST HOOK
----------------------------------------------------------------------
-do
-    local mt          = getrawmetatable(game)
-    local oldNamecall = mt.__namecall
-    setreadonly(mt,false)
-    mt.__namecall = function(self,...)
-        local method = getnamecallmethod()
-        if method == "Raycast" and self == workspace and _G.SilentAimEnabled and target then
-            local args = {...}
-            local origin, dir = args[1], args[2]
-            args[2] = (target.Position - origin).Unit * dir.Magnitude
-            if _G.WallbangEnabled then
-                local rp = RaycastParams.new()
-                rp.FilterType = Enum.RaycastFilterType.Whitelist
-                rp.FilterDescendantsInstances = {target}
-                rp.IgnoreWater = true
-                args[3] = rp
-            end
-            return oldNamecall(self, unpack(args))
-        end
-        return oldNamecall(self, ...)
-    end
-    setreadonly(mt,true)
-end
-
----------------------------------------------------------------------
--- ▶ ESP HELPERS (unchanged)
----------------------------------------------------------------------
+-- Helper functions
 local function addHighlight(plr)
     if highlights[plr] then highlights[plr]:Destroy() end
-    local c = plr.Character
-    if not c then return end
-    local h = Instance.new("Highlight", c)
-    h.FillColor    = Color3.fromRGB(0,170,255)
+    local c = plr.Character if not c then return end
+    local h = Instance.new("Highlight")
+    h.FillColor    = Color3.fromRGB(255,255,255)
     h.OutlineColor = Color3.fromRGB(255,255,255)
+    h.Adornee      = c
+    h.Parent       = c
     highlights[plr] = h
 end
 local function removeHighlight(plr)
-    if highlights[plr] then highlights[plr]:Destroy(); highlights[plr]=nil end
+    if highlights[plr] then highlights[plr]:Destroy(); highlights[plr] = nil end
 end
+
 local function addTracer(plr)
     if tracerLines[plr] then return end
     local ln = Drawing.new("Line")
-    ln.Thickness, ln.Color, ln.Visible = 1, Color3.new(1,1,1), true
+    ln.Thickness = 1
+    ln.Color     = Color3.fromRGB(255,255,255)
+    ln.Visible   = true
     tracerLines[plr] = ln
 end
 local function removeTracer(plr)
-    if tracerLines[plr] then tracerLines[plr]:Remove(); tracerLines[plr]=nil end
+    if tracerLines[plr] then tracerLines[plr]:Remove(); tracerLines[plr] = nil end
 end
+
 local function addSkeleton(plr)
     if skeletonLines[plr] then for _,ln in ipairs(skeletonLines[plr]) do ln:Remove() end end
     skeletonLines[plr] = {}
-    for i=1,5 do
+    for _ = 1,5 do
         local ln = Drawing.new("Line")
-        ln.Thickness, ln.Color, ln.Visible = 1, Color3.new(1,1,1), true
+        ln.Thickness = 1
+        ln.Color     = Color3.fromRGB(255,255,255)
+        ln.Visible   = true
         table.insert(skeletonLines[plr], ln)
     end
 end
 local function removeSkeleton(plr)
-    if skeletonLines[plr] then
-        for _,ln in ipairs(skeletonLines[plr]) do ln:Remove() end
-        skeletonLines[plr] = nil
+    if skeletonLines[plr] then for _,ln in ipairs(skeletonLines[plr]) do ln:Remove() end skeletonLines[plr] = nil end
+end
+
+local function addCornerBox(plr)
+    if cornerBoxes[plr] then for _,ln in ipairs(cornerBoxes[plr]) do ln:Remove() end end
+    cornerBoxes[plr] = {}
+    for _=1,8 do
+        local ln = Drawing.new("Line")
+        ln.Thickness = 2
+        ln.Color = Color3.fromRGB(255,255,255)
+        ln.Visible = false
+        table.insert(cornerBoxes[plr], ln)
     end
 end
+local function removeCornerBox(plr)
+    if cornerBoxes[plr] then for _,ln in ipairs(cornerBoxes[plr]) do ln:Remove() end cornerBoxes[plr] = nil end
+end
+
 local function hookPlayer(plr)
     plr.CharacterAdded:Connect(function()
         if _G.HighlightEnabled then addHighlight(plr) end
+        if _G.CornerBoxEnabled then addCornerBox(plr) end
     end)
     plr.CharacterRemoving:Connect(function()
-        removeHighlight(plr); removeTracer(plr); removeSkeleton(plr)
+        removeHighlight(plr)
+        removeTracer(plr)
+        removeSkeleton(plr)
+        removeCornerBox(plr)
     end)
 end
 for _,p in ipairs(Players:GetPlayers()) do hookPlayer(p) end
 Players.PlayerAdded:Connect(hookPlayer)
 
----------------------------------------------------------------------
--- ▶ RENDER-STEPPED LOOP
----------------------------------------------------------------------
+-- RAPID FIRE (auto clicker)
+do
+    local autoClickDelay = 0.01
+    local clicking = false
+    spawn(function()
+        while true do
+            if _G.RapidFireEnabled and clicking then
+                local char = LocalPlayer.Character
+                if char then
+                    for _, tool in ipairs(char:GetChildren()) do
+                        if tool:IsA("Tool") then
+                            pcall(function() tool:Activate() end)
+                            for _, mod in ipairs(tool:GetChildren()) do
+                                if mod:IsA("ModuleScript") then
+                                    local ok, m = pcall(require, mod)
+                                    if ok and type(m) == "table" and m.shoot then
+                                        pcall(function() m:shoot(false) end)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+            wait(autoClickDelay)
+        end
+    end)
+    UserInput.InputBegan:Connect(function(input, gpe)
+        if not gpe and input.UserInputType == Enum.UserInputType.MouseButton1 then clicking = true end
+    end)
+    UserInput.InputEnded:Connect(function(input, gpe)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then clicking = false end
+    end)
+end
+
+-- INFINITE AMMO
+local infAmmoConnBP, infAmmoConnChar
+local function patchGun(tool)
+    for _, child in ipairs(tool:GetChildren()) do
+        if child:IsA("ModuleScript") then
+            local s, m = pcall(require, child)
+            if type(m) == "table" then
+                if m.config then m.config.clip_size = 999 end
+                if m.mag_size then m.mag_size = 999 end
+                if m.clip_size then m.clip_size = 999 end
+                if m.reload then m.reload = function() m.mag_size = 999 end end
+                if m.shoot then
+                    local origShoot = m.shoot
+                    m.shoot = function(self, ...)
+                        local result = origShoot(self, ...)
+                        self.mag_size = 999
+                        if self.config then self.config.clip_size = 999 end
+                        return result
+                    end
+                end
+            end
+        end
+    end
+    local weaponLib = ReplicatedStorage:FindFirstChild("libraries") and ReplicatedStorage.libraries:FindFirstChild("weapon")
+    if weaponLib then
+        local libMod = require(weaponLib)
+        if libMod and libMod.new then
+            local obj = libMod.new(tool)
+            if obj and obj.config then
+                obj.config.clip_size = 999
+                obj.mag_size         = 999
+            end
+        end
+    end
+end
+local function patchAllGuns()
+    for _, tool in ipairs(LocalPlayer.Backpack:GetChildren()) do patchGun(tool) end
+    if LocalPlayer.Character then
+        for _, tool in ipairs(LocalPlayer.Character:GetChildren()) do
+            if tool:IsA("Tool") then patchGun(tool) end
+        end
+    end
+end
+local function updateInfiniteAmmo()
+    if _G.InfiniteAmmoEnabled then
+        patchAllGuns()
+        if infAmmoConnBP then infAmmoConnBP:Disconnect() end
+        if infAmmoConnChar then infAmmoConnChar:Disconnect() end
+        infAmmoConnBP = LocalPlayer.Backpack.ChildAdded:Connect(function(tool) patchGun(tool) end)
+        if LocalPlayer.Character then
+            infAmmoConnChar = LocalPlayer.Character.ChildAdded:Connect(function(tool)
+                if tool:IsA("Tool") then patchGun(tool) end
+            end)
+        end
+    else
+        if infAmmoConnBP then infAmmoConnBP:Disconnect() infAmmoConnBP = nil end
+        if infAmmoConnChar then infAmmoConnChar:Disconnect() infAmmoConnChar = nil end
+    end
+end
+RunService.RenderStepped:Connect(updateInfiniteAmmo)
+
+-- SILENT AIM + WALLBANG (Raycast Hook)
+do
+    local mt, old = getrawmetatable(game), nil
+    if mt then
+        old = mt.__namecall
+        setreadonly(mt, false)
+        mt.__namecall = function(self,...)
+            local m = getnamecallmethod()
+            local a = {...}
+            if m == "Raycast" and self == workspace and _G.SilentAimEnabled and target then
+                local origin, dir = a[1], a[2]
+                a[2] = (target.Position - origin).Unit * dir.Magnitude
+                if _G.WallbangEnabled then
+                    local rp = RaycastParams.new()
+                    rp.FilterType                 = Enum.RaycastFilterType.Whitelist
+                    rp.FilterDescendantsInstances = {target}
+                    rp.IgnoreWater                = true
+                    a[3] = rp
+                end
+                return old(self, unpack(a))
+            end
+            return old(self, ...)
+        end
+        setreadonly(mt, true)
+    end
+end
+
+-- RAGE/ESP + FOV + TARGET/CHANCE + HITBOXES + Full Corner ESP
 RunService.RenderStepped:Connect(function()
-    -- FOV
+    -- RAGE FOV circle
     fovCircle.Position = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
     fovCircle.Radius   = _G.FOVRadius
     fovCircle.Visible  = _G.SilentAimEnabled
 
-    -- pick target
-    local nearest, best = nil, math.huge
+    -- select nearest bone (no self lock)
+    target, bestDist = nil, math.huge
     if _G.SilentAimEnabled then
         for _,plr in ipairs(Players:GetPlayers()) do
             if plr~=LocalPlayer and plr.Character then
-                local rigMap = isR15(plr.Character) and boneDefsR15 or boneDefsR6
                 local bone = plr.Character:FindFirstChild(_G.SelectedBone)
                 if bone then
                     local p2d,on = Camera:WorldToViewportPoint(bone.Position)
                     if on then
-                        local d = (Vector2.new(p2d.X,p2d.Y)-Vector2.new(Camera.ViewportSize.X/2,Camera.ViewportSize.Y/2)).Magnitude
-                        if d<=_G.FOVRadius and d<best then best,nearest=d,bone end
+                        local d = (Vector2.new(p2d.X,p2d.Y) - Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)).Magnitude
+                        if d<=_G.FOVRadius and d<bestDist then
+                            if not (LocalPlayer.Character and bone:IsDescendantOf(LocalPlayer.Character)) then
+                                bestDist, target = d, bone
+                            end
+                        end
                     end
                 end
             end
         end
     end
-    target = nearest
+    if target and LocalPlayer.Character and target:IsDescendantOf(LocalPlayer.Character) then target = nil end
 
-    -- per-player ESP
+    -- targetdot & hit-chance
+    if target then
+        local p2d,on = Camera:WorldToViewportPoint(target.Position)
+        if on then
+            targetDot.Position = Vector2.new(p2d.X, p2d.Y)
+            targetDot.Visible  = true
+        else targetDot.Visible = false end
+        local head = target.Parent and target.Parent:FindFirstChild("Head") or target
+        local h2d,onH = Camera:WorldToViewportPoint(head.Position + Vector3.new(0,0.6,0))
+        if onH then
+            local chance = math.clamp(math.floor((1 - bestDist/_G.FOVRadius)*100 + 0.5),0,100)
+            hitLabel.Text     = "Hit Chance "..chance.."%"
+            hitLabel.Position = Vector2.new(h2d.X, h2d.Y - 20)
+            hitLabel.Visible  = true
+        else hitLabel.Visible=false end
+    else
+        targetDot.Visible=false; hitLabel.Visible=false
+    end
+
+    -- per-player ESPs + Hitboxes
     for _,plr in ipairs(Players:GetPlayers()) do
         if plr~=LocalPlayer and plr.Character then
             local c = plr.Character
             local hrp = c:FindFirstChild("HumanoidRootPart")
-            -- Hitbox
             if hrp and _G.HitboxEnabled then
                 pcall(function()
-                    hrp.Size, hrp.Transparency = Vector3.new(_G.HeadSize,_G.HeadSize,_G.HeadSize), 0.7
-                    hrp.BrickColor, hrp.Material, hrp.CanCollide = BrickColor.new("Really blue"), Enum.Material.Neon, false
+                    hrp.Size = Vector3.new(_G.HeadSize,_G.HeadSize,_G.HeadSize)
+                    hrp.Transparency=0.7
+                    hrp.BrickColor=BrickColor.new("Institutional white")
+                    hrp.Material=Enum.Material.Neon
+                    hrp.CanCollide=false
                 end)
             end
-            -- Tracer
             if _G.TracerEnabled then
                 addTracer(plr)
-                local ln=pcall and tracerLines[plr]
-                local pos2d,on=Camera:WorldToViewportPoint(hrp.Position)
-                if on then ln.From,ln.To,ln.Visible = Vector2.new(Camera.ViewportSize.X/2,Camera.ViewportSize.Y/2), Vector2.new(pos2d.X,pos2d.Y), true
-                else ln.Visible=false end
+                local ln = tracerLines[plr]
+                local p2d,on = Camera:WorldToViewportPoint(hrp and hrp.Position or c:GetModelCFrame().Position)
+                if on then ln.From=Vector2.new(Camera.ViewportSize.X/2,Camera.ViewportSize.Y/2); ln.To=Vector2.new(p2d.X,p2d.Y); ln.Visible=true else ln.Visible=false end
             else removeTracer(plr) end
-            -- Highlight
+
             if _G.HighlightEnabled then
                 addHighlight(plr)
-                highlights[plr].FillColor = (target and c:FindFirstChild(_G.SelectedBone)==target) and Color3.fromRGB(255,0,0) or Color3.fromRGB(0,170,255)
+                local h = highlights[plr]
+                h.FillColor = (target and c:FindFirstChild(_G.SelectedBone)==target) and Color3.fromRGB(255,0,0) or Color3.fromRGB(255,255,255)
             else removeHighlight(plr) end
-            -- Skeleton
+
             if _G.SkeletonEnabled then
                 addSkeleton(plr)
-                local pairs = isR15(c)
-                    and {{"Head","UpperTorso"},{"LeftUpperArm","UpperTorso"},{"RightUpperArm","UpperTorso"},{"LeftUpperLeg","LowerTorso"},{"RightUpperLeg","LowerTorso"}}
-                    or {{"Head","Torso"},{"Left Arm","Torso"},{"Right Arm","Torso"},{"Left Leg","Torso"},{"Right Leg","Torso"}}
-                for i,pair in ipairs(pairs) do
-                    local a,b = c:FindFirstChild(pair[1]), c:FindFirstChild(pair[2])
-                    local ln = skeletonLines[plr] and skeletonLines[plr][i]
-                    if a and b and ln then
-                        local a2d,onA=Camera:WorldToViewportPoint(a.Position)
-                        local b2d,onB=Camera:WorldToViewportPoint(b.Position)
-                        if onA and onB then ln.From,ln.To,ln.Visible = Vector2.new(a2d.X,a2d.Y),Vector2.new(b2d.X,b2d.Y),true
-                        else ln.Visible=false end
-                    end
+                local pairs = {{"Head","Torso"},{"Left Arm","Torso"},{"Right Arm","Torso"},{"Left Leg","Torso"},{"Right Leg","Torso"}}
+                for i,p in ipairs(pairs) do
+                    local a,b = c:FindFirstChild(p[1]), c:FindFirstChild(p[2])
+                    local ln = skeletonLines[plr][i]
+                    if a and b then
+                        local a2d,aOn = Camera:WorldToViewportPoint(a.Position)
+                        local b2d,bOn = Camera:WorldToViewportPoint(b.Position)
+                        if aOn and bOn then ln.From=Vector2.new(a2d.X,a2d.Y); ln.To=Vector2.new(b2d.X,b2d.Y); ln.Visible=true else ln.Visible=false end
+                    else ln.Visible=false end
                 end
             else removeSkeleton(plr) end
+
+            -- Full-body Corner ESP
+            if _G.CornerBoxEnabled then
+                addCornerBox(plr)
+                local bbox = cornerBoxes[plr]
+                -- Gather all relevant parts
+                local parts = {}
+                for _, name in ipairs({"Head", "Torso", "UpperTorso", "LowerTorso", "HumanoidRootPart",
+                    "Left Arm", "LeftUpperArm", "LeftLowerArm",
+                    "Right Arm", "RightUpperArm", "RightLowerArm",
+                    "Left Leg", "LeftUpperLeg", "LeftLowerLeg",
+                    "Right Leg", "RightUpperLeg", "RightLowerLeg"
+                }) do
+                    local part = c:FindFirstChild(name)
+                    if part then table.insert(parts, part) end
+                end
+                if #parts > 0 then
+                    -- Find world-space bounds
+                    local minVec, maxVec
+                    for _, part in ipairs(parts) do
+                        local cf, sz = part.CFrame, part.Size
+                        for _, dx in ipairs({-0.5,0.5}) do
+                            for _, dy in ipairs({-0.5,0.5}) do
+                                for _, dz in ipairs({-0.5,0.5}) do
+                                    local pt = cf.Position + cf.RightVector*sz.X*dx + cf.UpVector*sz.Y*dy + cf.LookVector*sz.Z*dz
+                                    if not minVec then minVec = pt; maxVec = pt
+                                    else
+                                        minVec = Vector3.new(math.min(minVec.X, pt.X), math.min(minVec.Y, pt.Y), math.min(minVec.Z, pt.Z))
+                                        maxVec = Vector3.new(math.max(maxVec.X, pt.X), math.max(maxVec.Y, pt.Y), math.max(maxVec.Z, pt.Z))
+                                    end
+                                end
+                            end
+                        end
+                    end
+                    -- Project all 8 corners of the player bounding box
+                    local corners2D = {}
+                    local onScreen = false
+                    for _, dx in ipairs({0,1}) do
+                        for _, dy in ipairs({0,1}) do
+                            local x = dx==0 and minVec.X or maxVec.X
+                            local y = dy==0 and minVec.Y or maxVec.Y
+                            local z = minVec.Z
+                            local vec, on = Camera:WorldToViewportPoint(Vector3.new(x,y,z))
+                            table.insert(corners2D, Vector2.new(vec.X, vec.Y))
+                            if on then onScreen = true end
+                            z = maxVec.Z
+                            vec, on = Camera:WorldToViewportPoint(Vector3.new(x,y,z))
+                            table.insert(corners2D, Vector2.new(vec.X, vec.Y))
+                            if on then onScreen = true end
+                        end
+                    end
+                    -- Find min/max screen x/y for corner rectangle
+                    local minX, minY, maxX, maxY = math.huge, math.huge, -math.huge, -math.huge
+                    for _, pt in ipairs(corners2D) do
+                        minX = math.min(minX, pt.X)
+                        minY = math.min(minY, pt.Y)
+                        maxX = math.max(maxX, pt.X)
+                        maxY = math.max(maxY, pt.Y)
+                    end
+                    if onScreen then
+                        local w = maxX - minX
+                        local h = maxY - minY
+                        local len = math.clamp(math.floor(math.min(w,h)/4), 8, 32)
+                        -- Top Left
+                        bbox[1].From = Vector2.new(minX, minY)
+                        bbox[1].To   = Vector2.new(minX+len, minY)
+                        bbox[2].From = Vector2.new(minX, minY)
+                        bbox[2].To   = Vector2.new(minX, minY+len)
+                        -- Top Right
+                        bbox[3].From = Vector2.new(maxX, minY)
+                        bbox[3].To   = Vector2.new(maxX-len, minY)
+                        bbox[4].From = Vector2.new(maxX, minY)
+                        bbox[4].To   = Vector2.new(maxX, minY+len)
+                        -- Bottom Right
+                        bbox[5].From = Vector2.new(maxX, maxY)
+                        bbox[5].To   = Vector2.new(maxX-len, maxY)
+                        bbox[6].From = Vector2.new(maxX, maxY)
+                        bbox[6].To   = Vector2.new(maxX, maxY-len)
+                        -- Bottom Left
+                        bbox[7].From = Vector2.new(minX, maxY)
+                        bbox[7].To   = Vector2.new(minX+len, maxY)
+                        bbox[8].From = Vector2.new(minX, maxY)
+                        bbox[8].To   = Vector2.new(minX, maxY-len)
+                        for i=1,8 do bbox[i].Visible=true end
+                    else
+                        for i=1,8 do bbox[i].Visible=false end
+                    end
+                end
+            else
+                removeCornerBox(plr)
+            end
+        else
+            removeCornerBox(plr)
         end
     end
 end)
 
----------------------------------------------------------------------
--- ▶ UI CREATION
----------------------------------------------------------------------
-local function createUI()
-    local gui = LocalPlayer.PlayerGui:FindFirstChild("ESP_Toggle_GUI")
-    if gui then gui:Destroy() end
+----------------------------------------------------------
+-- Legit Aimbot & Triggerbot Logic
+----------------------------------------------------------
+local keyCycle = {
+    {name="[Right Mouse]", type=Enum.UserInputType.MouseButton2},
+    {name="[Left Mouse]",  type=Enum.UserInputType.MouseButton1},
+    {name="[E]",           type=Enum.KeyCode.E},
+    {name="[Q]",           type=Enum.KeyCode.Q},
+    {name="[F]",           type=Enum.KeyCode.F},
+    {name="[Left Shift]",  type=Enum.KeyCode.LeftShift},
+    {name="[Left Alt]",    type=Enum.KeyCode.LeftAlt}
+}
+local function cycleKey(currentIdx)
+    currentIdx = (currentIdx or 1) + 1
+    if currentIdx > #keyCycle then currentIdx = 1 end
+    return currentIdx
+end
 
-    local guiNew = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
-    guiNew.Name, guiNew.ResetOnSpawn = "ESP_Toggle_GUI", false
+local function isKeyDown(key)
+    if typeof(key) == "EnumItem" then
+        if tostring(key):find("UserInputType") then
+            return UserInput:IsMouseButtonPressed(key)
+        else
+            return UserInput:IsKeyDown(key)
+        end
+    end
+    return false
+end
 
-    local frame = Instance.new("Frame", guiNew)
-    frame.Size, frame.Position = UDim2.new(0,420,0, _G.UIMinimized and 34 or 360), _G.UIPosition
-    frame.BackgroundColor3, frame.BorderSizePixel = Color3.fromRGB(30,30,38), 0
-    Instance.new("UICorner", frame).CornerRadius = UDim.new(0,10)
+local function get_mousemoverel()
+    if rawget(_G,"mousemoverel") then return _G.mousemoverel end
+    local s,e = pcall(function() return mousemoverel end)
+    if s and type(e)=="function" then return e end
+    if Input and type(Input.MouseMove)=="function" then return Input.MouseMove end
+    return nil
+end
+local mousemoverel = get_mousemoverel()
 
-    local header = Instance.new("Frame", frame)
-    header.Size, header.BackgroundColor3, header.BorderSizePixel = UDim2.new(1,0,0,34), Color3.fromRGB(40,40,48), 0
-    Instance.new("UICorner", header).CornerRadius=UDim.new(0,10)
+-- LEGIT AIMBOT LOGIC
+RunService.RenderStepped:Connect(function()
+    -- LEGIT FOV CIRCLE
+    legitFOVCircle.Position = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
+    legitFOVCircle.Radius   = _G.LegitAimbotFOV or 35
+    legitFOVCircle.Visible  = (_G.LegitAimbotShowFOV and (_G.LegitAimbotEnabled or _G.MouseAimbotEnabled))
 
-    local title = Instance.new("TextLabel", header)
-    title.Text, title.Font, title.TextSize = "HexWare – @0nehex  |  COMBAT SURF", Enum.Font.SourceSansSemibold, 18
-    title.TextColor3, title.BackgroundTransparency = Color3.fromRGB(230,230,230), 1
-    title.Size, title.Position, title.TextXAlignment = UDim2.new(1,-80,1,0), UDim2.new(0,12,0,0), Enum.TextXAlignment.Left
+    -- LEGIT AIMBOT
+    local aimKey = _G.LegitAimbotKey or Enum.UserInputType.MouseButton2
+    local mouseAim = _G.MouseAimbotEnabled
+    local camAim = _G.LegitAimbotEnabled
 
-    local closeBtn = Instance.new("TextButton", header)
-    closeBtn.Size, closeBtn.Position, closeBtn.Text, closeBtn.Font, closeBtn.TextSize = UDim2.new(0,28,0,28), UDim2.new(1,-32,0,3), "X", Enum.Font.SourceSansBold, 20
-    closeBtn.TextColor3, closeBtn.BackgroundTransparency = Color3.new(1,1,1), 1
-    closeBtn.MouseButton1Click:Connect(function() guiNew:Destroy() end)
+    if not ((mouseAim or camAim) and isKeyDown(aimKey)) then return end
 
-    local minBtn = Instance.new("TextButton", header)
-    minBtn.Size, minBtn.Position, minBtn.Text, minBtn.Font, minBtn.TextSize = UDim2.new(0,28,0,28), UDim2.new(1,-64,0,3), "-", Enum.Font.SourceSansBold, 20
-    minBtn.TextColor3, minBtn.BackgroundTransparency = Color3.new(1,1,1), 1
+    local closest, closestDist, aimPart = nil, math.huge, nil
 
-    local content = Instance.new("Frame", frame)
-    content.Size, content.Position, content.BackgroundTransparency = _G.UIMinimized and UDim2.new(1,0,0,0) or UDim2.new(1,0,1,-34), UDim2.new(0,0,0,34), 1
-    content.Visible = not _G.UIMinimized
-
-    -- left panel
-    local leftPanel = Instance.new("Frame", content)
-    leftPanel.Size, leftPanel.BackgroundColor3, leftPanel.BorderSizePixel = UDim2.new(0.35,0,1,0), Color3.fromRGB(28,28,36), 0
-    Instance.new("UICorner", leftPanel).CornerRadius=UDim.new(0,8)
-    Instance.new("UIPadding", leftPanel).PaddingTop = UDim.new(0,20)
-
-    local listLayout = Instance.new("UIListLayout", leftPanel)
-    listLayout.Padding, listLayout.SortOrder, listLayout.HorizontalAlignment = UDim.new(0,8), Enum.SortOrder.LayoutOrder, Enum.HorizontalAlignment.Center
-
-    local toggles = {
-        {flag="HitboxEnabled",    on="Enable Hit-Boxes",     off="Disable Hit-Boxes"},
-        {flag="HighlightEnabled", on="Enable Highlight ESP", off="Disable Highlight ESP"},
-        {flag="TracerEnabled",    on="Enable Tracer ESP",    off="Disable Tracer ESP"},
-        {flag="SkeletonEnabled",  on="Enable Skeleton ESP",  off="Disable Skeleton ESP"},
-        {flag="SilentAimEnabled", on="Enable Silent-Aim",    off="Disable Silent-Aim"},
-        {flag="WallbangEnabled",  on="Enable Wall-Bang",     off="Disable Wall-Bang"},
-    }
-    for i,def in ipairs(toggles) do
-        local btn = Instance.new("TextButton", leftPanel)
-        btn.LayoutOrder, btn.Size, btn.Font, btn.TextSize = i, UDim2.new(0.9,0,0,36), Enum.Font.SourceSansBold, 16
-        btn.TextColor3, btn.BackgroundColor3 = Color3.new(1,1,1), Color3.fromRGB(64,64,72)
-        Instance.new("UICorner", btn).CornerRadius=UDim.new(0,6)
-        local function refresh()
-            if _G[def.flag] then
-                btn.Text, btn.BackgroundColor3 = def.off, Color3.fromRGB(0,170,255)
-            else
-                btn.Text, btn.BackgroundColor3 = def.on, Color3.fromRGB(64,64,72)
+    for _,plr in ipairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("Humanoid") and plr.Character.Humanoid.Health > 0 then
+            local part = plr.Character:FindFirstChild(_G.SelectedBone or "Head")
+            if part then
+                local screenPos, onScreen = Camera:WorldToViewportPoint(part.Position)
+                if onScreen then
+                    local dist = (Vector2.new(screenPos.X,screenPos.Y) - Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)).Magnitude
+                    if dist < (_G.LegitAimbotFOV or 35) and dist < closestDist then
+                        closestDist = dist
+                        closest = plr
+                        aimPart = part
+                    end
+                end
             end
         end
-        btn.MouseButton1Click:Connect(function() _G[def.flag]=not _G[def.flag]; refresh() end)
-        refresh()
     end
 
-    -- FOV slider
-    local maxFov=300
-    local sliderFrame=Instance.new("Frame", leftPanel)
-    sliderFrame.LayoutOrder=#toggles+1; sliderFrame.Size=UDim2.new(0.9,0,0,45); sliderFrame.BackgroundTransparency=1
-    local fovLabel=Instance.new("TextLabel", sliderFrame)
-    fovLabel.Size, fovLabel.Text, fovLabel.Font, fovLabel.TextSize, fovLabel.BackgroundTransparency = UDim2.new(1,0,0,20), "FOV Radius: ".._G.FOVRadius, Enum.Font.SourceSans, 14, 1
-    fovLabel.TextColor3 = Color3.fromRGB(230,230,230)
-    local track=Instance.new("Frame", sliderFrame)
-    track.Size, track.Position, track.BackgroundColor3 = UDim2.new(1,0,0,6), UDim2.new(0,0,1,-20), Color3.fromRGB(80,80,88)
-    Instance.new("UICorner", track).CornerRadius=UDim.new(0,3)
-    local knob=Instance.new("Frame", track)
-    knob.Size, knob.BackgroundColor3 = UDim2.new(_G.FOVRadius/maxFov,0,1,0), Color3.fromRGB(0,170,255)
-    Instance.new("UICorner", knob).CornerRadius=UDim.new(0,3)
-    local dragging=false
-    knob.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=true end end)
-    knob.InputEnded:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=false end end)
-    UserInput.InputChanged:Connect(function(i)
-        if dragging and i.UserInputType==Enum.UserInputType.MouseMovement then
-            local absX,leftX,leftW=i.Position.X,track.AbsolutePosition.X,track.AbsoluteSize.X
-            local rel=math.clamp((absX-leftX)/leftW,0,1)
-            _G.FOVRadius=math.floor(rel*maxFov)
-            knob.Size=UDim2.new(rel,0,1,0)
-            fovLabel.Text="FOV Radius: ".._G.FOVRadius
-        end
-    end)
+    if not (closest and aimPart) then return end
 
-    -- right panel
-    local rightPanel=Instance.new("Frame", content)
-    rightPanel.Size, rightPanel.Position, rightPanel.BackgroundColor3, rightPanel.BorderSizePixel = UDim2.new(0.63,0,1,0), UDim2.new(0.37,0,0,0), Color3.fromRGB(24,24,32), 0
-    Instance.new("UICorner", rightPanel).CornerRadius=UDim.new(0,8)
+    local smooth = math.clamp(_G.LegitAimbotSmooth or 10, 1, 50)
+    if camAim then
+        local camCF = Camera.CFrame
+        local dir = (aimPart.Position - camCF.Position).Unit
+        local targetCF = CFrame.new(camCF.Position, camCF.Position + dir)
+        Camera.CFrame = camCF:Lerp(targetCF, 1/smooth)
+    elseif mouseAim and mousemoverel then
+        local screenPos = Camera:WorldToViewportPoint(aimPart.Position)
+        local center = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
+        local delta = Vector2.new(screenPos.X, screenPos.Y) - center
+        mousemoverel(delta.X/smooth, delta.Y/smooth)
+    end
+end)
 
-    local boneLabel=Instance.new("TextLabel", rightPanel)
-    boneLabel.Text, boneLabel.Font, boneLabel.TextSize, boneLabel.TextColor3, boneLabel.BackgroundTransparency = "Select Bone", Enum.Font.SourceSansSemibold, 18, Color3.fromRGB(200,200,220), 1
-    boneLabel.Size, boneLabel.Position = UDim2.new(1,0,0,30), UDim2.new(0,0,0,0)
+-- TRIGGERBOT LOGIC
+local lastShot = 0
+RunService.RenderStepped:Connect(function()
+    if not (_G.TriggerbotEnabled and _G.TriggerbotKey) then return end
+    if not isKeyDown(_G.TriggerbotKey) then return end
+    local mouse = LocalPlayer:GetMouse()
+    local target = mouse.Target
+    if not target or not target.Parent then return end
+    local hum = target.Parent:FindFirstChild("Humanoid")
+    if not hum or hum.Health <= 0 then return end
+    local partName = target.Name:lower()
+    if not (partName:find("head") or partName:find("torso") or partName:find("body")) then return end
+    local now = tick()
+    local delayMs = (_G.TriggerbotDelay or 50)/1000
+    if now - lastShot < delayMs then return end
+    local vim = game:GetService("VirtualInputManager")
+    vim:SendMouseButtonEvent(mouse.X, mouse.Y, 0, true, game, 0)
+    task.wait(0.03)
+    vim:SendMouseButtonEvent(mouse.X, mouse.Y, 0, false, game, 0)
+    lastShot = now
+end)
 
-    local rigMap = isR15(LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()) and boneDefsR15 or boneDefsR6
-    local boneButtons = {}
-    local function updateBoneButtons()
-        for bone,btn in pairs(boneButtons) do
-            if _G.SelectedBone==bone then btn.BackgroundColor3=Color3.fromRGB(0,170,255); btn.Text="✔"
-            else btn.BackgroundColor3=Color3.fromRGB(64,64,72); btn.Text="" end
+_G.SpinBotEnabled = _G.SpinBotEnabled or false
+
+RunService.RenderStepped:Connect(function()
+    if _G.SpinBotEnabled then
+        local char = LocalPlayer.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            local hrp = char.HumanoidRootPart
+            -- Spin Bot: Spins rapidly (adjust 5000 for speed)
+            local angle = math.rad((tick() * 5000) % 360)
+            hrp.CFrame = CFrame.new(hrp.Position) * CFrame.Angles(0, angle, 0)
         end
     end
+end)
 
-    local idx=0
-    for bone,def in pairs(rigMap) do
-        idx=idx+1
-        local btn=Instance.new("TextButton", rightPanel)
-        btn.Name, btn.Position, btn.Size = bone, UDim2.new(((idx-1)%3)/3,10,math.floor((idx-1)/3)*50+40,40), UDim2.new(0.3,-15,0,40)
-        btn.BackgroundColor3, btn.BorderSizePixel, btn.Font, btn.TextSize = Color3.fromRGB(64,64,72),0,Enum.Font.SourceSansBold,18
-        Instance.new("UICorner", btn).CornerRadius=UDim.new(0.3,0)
-        btn.MouseButton1Click:Connect(function() _G.SelectedBone=bone; updateBoneButtons() end)
-        boneButtons[bone]=btn
-    end
-    updateBoneButtons()
+local Lighting = game:GetService("Lighting")
+_G.SkyColor = _G.SkyColor or Color3.new(0,0,0)
+_G.FogColor = _G.FogColor or Color3.new(1,1,1)
+_G.FogStart = _G.FogStart or 0
+_G.FogEnd   = _G.FogEnd or 100000
 
-    -- minimise & drag
-    minBtn.MouseButton1Click:Connect(function()
-        _G.UIMinimized = not _G.UIMinimized
-        createUI()
-    end)
-    local draggingHeader, dragInput, dragStart, startPos = false, nil, nil, nil
-    header.InputBegan:Connect(function(i)
-        if i.UserInputType==Enum.UserInputType.MouseButton1 then
-            draggingHeader, dragStart, startPos = true, i.Position, frame.Position
-            i.Changed:Connect(function() if i.UserInputState==Enum.UserInputState.End then draggingHeader=false end end)
+RunService.RenderStepped:Connect(function()
+    Lighting.FogColor = _G.FogColor
+    Lighting.FogStart = _G.FogStart
+    Lighting.FogEnd   = _G.FogEnd
+    Lighting.Ambient  = _G.SkyColor
+end)
+
+RunService.RenderStepped:Connect(function()
+    local skinName = _G.SelectedWeaponSkin or skinNames[1]
+    local skinData = weaponSkins[skinName]
+
+    if LocalPlayer and LocalPlayer.Character then
+        for _, tool in ipairs(LocalPlayer.Character:GetChildren()) do
+            if tool:IsA("Tool") then
+
+                if skinData.type == "colour" then
+                    -- Apply a solid color to every BasePart
+                    for _, part in ipairs(tool:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.Color = skinData.colour
+                            -- Clear any textures on MeshParts
+                            if part:IsA("MeshPart") then
+                                part.TextureID = ""
+                            end
+                            -- Remove any decals left over
+                            for _, child in ipairs(part:GetChildren()) do
+                                if child:IsA("Decal") then
+                                    child:Destroy()
+                                end
+                            end
+                        end
+                    end
+
+                elseif skinData.type == "image" then
+                    local asset = "rbxassetid://" .. skinData.image_id
+
+                    -- 1) Full-model texture on MeshParts
+                    for _, mp in ipairs(tool:GetDescendants()) do
+                        if mp:IsA("MeshPart") then
+                            mp.TextureID = asset
+                        end
+                    end
+
+                    -- 2) Six-face decals on every non-Mesh BasePart
+                    for _, part in ipairs(tool:GetDescendants()) do
+                        if part:IsA("BasePart") and not part:IsA("MeshPart") then
+                            -- clear old decals
+                            for _, d in ipairs(part:GetChildren()) do
+                                if d:IsA("Decal") then d:Destroy() end
+                            end
+                            -- apply new decal on all faces
+                            for _, face in ipairs(Enum.NormalId:GetEnumItems()) do
+                                local decal = Instance.new("Decal")
+                                decal.Name    = "SkinDecal_"..face.Name
+                                decal.Face    = face
+                                decal.Texture = asset
+                                decal.Parent  = part
+                            end
+                        end
+                    end
+
+                end
+            end
         end
+    end
+end)
+
+----------------------------------------------------------
+-- UI Section Functions (Toggles, Sliders, KeyPickers)
+----------------------------------------------------------
+
+local function addToggle(sec, label, y, flag)
+    local t = Instance.new("TextLabel", sec)
+    t.Text = label
+    t.Font = Enum.Font.Gotham
+    t.TextSize = 16
+    t.TextColor3 = textCol
+    t.BackgroundTransparency = 1
+    t.Position = UDim2.new(0,18,0,46+y)
+    t.Size = UDim2.new(0,150,0,24)
+    t.TextXAlignment = Enum.TextXAlignment.Left
+
+    local box = Instance.new("TextButton", sec)
+    box.Size = UDim2.new(0,22,0,22)
+    box.Position = UDim2.new(0,170,0,48+y)
+    box.BackgroundColor3 = bgCol
+    box.BorderSizePixel = 1
+    box.Text = ""
+    local check = Instance.new("Frame", box)
+    check.Size = UDim2.new(1,-4,1,-4)
+    check.Position = UDim2.new(0,2,0,2)
+    check.BackgroundColor3 = accent
+    check.Visible = _G[flag]
+    box.MouseButton1Click:Connect(function()
+        _G[flag] = not _G[flag]
+        check.Visible = _G[flag]
     end)
-    header.InputChanged:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseMovement then dragInput=i end end)
-    UserInput.InputChanged:Connect(function(i)
-        if draggingHeader and i==dragInput then
-            local delta=i.Position-dragStart
-            frame.Position=UDim2.new(startPos.X.Scale, startPos.X.Offset+delta.X, startPos.Y.Scale, startPos.Y.Offset+delta.Y)
-            _G.UIPosition=frame.Position
+end
+
+local function addSlider(sec, label, y, min, max, def, flag)
+    _G[flag] = _G[flag] or def
+    local val = _G[flag]
+    local lbl = Instance.new("TextLabel", sec)
+    lbl.Text = label..": "..val
+    lbl.Font = Enum.Font.Gotham
+    lbl.TextSize = 15
+    lbl.TextColor3 = textCol
+    lbl.BackgroundTransparency = 1
+    lbl.Position = UDim2.new(0,18,0,82+y)
+    lbl.Size = UDim2.new(0,130,0,20)
+    lbl.TextXAlignment = Enum.TextXAlignment.Left
+
+    local bar = Instance.new("Frame", sec)
+    bar.BackgroundColor3 = bgCol
+    bar.BorderSizePixel = 1
+    bar.Position = UDim2.new(0,18,0,110+y)
+    bar.Size = UDim2.new(0,140,0,8)
+    local fill = Instance.new("Frame", bar)
+    fill.BackgroundColor3 = accent
+    fill.Size = UDim2.new((val-min)/(max-min),0,1,0)
+    bar.InputBegan:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+            local conn; conn = game:GetService("UserInputService").InputChanged:Connect(function(i)
+                if i.UserInputType == Enum.UserInputType.MouseMovement then
+                    local rel = math.clamp(i.Position.X-bar.AbsolutePosition.X, 0, bar.AbsoluteSize.X)
+                    local pct = rel/bar.AbsoluteSize.X
+                    val = math.floor(min + (max-min)*pct)
+                    fill.Size = UDim2.new(pct,0,1,0)
+                    lbl.Text = label..": "..val
+                    _G[flag] = val
+                end
+            end)
+            bar.InputEnded:Connect(function() if conn then conn:Disconnect() end end)
         end
     end)
 end
 
----------------------------------------------------------------------
--- ▶ Initialise GUI
----------------------------------------------------------------------
-createUI()
-LocalPlayer.CharacterAdded:Connect(createUI)
+local function addKeyPicker(sec, label, y, flag, idxFlag)
+    _G[flag] = _G[flag] or keyCycle[1].type
+    _G[idxFlag] = _G[idxFlag] or 1
+    local box = Instance.new("TextButton", sec)
+    box.Text = label..": "..keyCycle[_G[idxFlag]].name
+    box.Font = Enum.Font.Gotham
+    box.TextSize = 14
+    box.TextColor3 = subText
+    box.BackgroundTransparency = 1
+    box.Position = UDim2.new(0,18,0,y)
+    box.Size = UDim2.new(1,-48,0,24)
+    box.TextXAlignment = Enum.TextXAlignment.Left
+    box.MouseButton1Click:Connect(function()
+        local idx = cycleKey(_G[idxFlag])
+        _G[idxFlag] = idx
+        _G[flag] = keyCycle[idx].type
+        box.Text = label..": "..keyCycle[idx].name
+    end)
+end
+
+local presetColors = {
+    Color3.new(1, 1, 1),      -- white
+    Color3.new(1, 0, 0),      -- red
+    Color3.new(0, 1, 0),      -- green
+    Color3.new(0, 0, 1),      -- blue
+    Color3.new(1, 1, 0),      -- yellow
+    Color3.new(0, 1, 1),      -- cyan
+    Color3.new(1, 0, 1),      -- magenta
+    Color3.new(0, 0, 0),      -- black
+    Color3.fromRGB(30,30,38), -- default sky color
+}
+
+function addColorPicker(sec, label, y, flag, default)
+    -- initialize
+    _G[flag] = _G[flag] or default
+    local idx = 1
+    for i, c in ipairs(presetColors) do
+        if tostring(_G[flag]) == tostring(c) then
+            idx = i
+            break
+        end
+    end
+
+    -- label
+    local lbl = Instance.new("TextLabel", sec)
+    lbl.Text               = label
+    lbl.Font               = Enum.Font.Gotham
+    lbl.TextSize           = 15
+    lbl.TextColor3         = textCol
+    lbl.BackgroundTransparency = 1
+    lbl.Position           = UDim2.new(0, 18, 0, 10 + y)
+    lbl.Size               = UDim2.new(0, 100, 0, 24)
+    lbl.TextXAlignment     = Enum.TextXAlignment.Left
+
+    -- color-preview button
+    local btn = Instance.new("TextButton", sec)
+    btn.Size               = UDim2.new(0, 48, 0, 24)
+    btn.Position           = UDim2.new(0, 140, 0, 10 + y)
+    btn.BackgroundColor3   = _G[flag]
+    btn.BorderSizePixel    = 1
+    btn.AutoButtonColor    = true
+    btn.Text               = ""
+    
+    -- cycle through presetColors on click
+    btn.MouseButton1Click:Connect(function()
+        idx = idx + 1
+        if idx > #presetColors then idx = 1 end
+        _G[flag] = presetColors[idx]
+        btn.BackgroundColor3 = _G[flag]
+    end)
+end
+
+local skinNames = {}
+for name in pairs(weaponSkins) do table.insert(skinNames, name) end
+table.sort(skinNames)
+
+-- clean UI helper for skins
+function addWeaponSkinPicker(sec, label, y, flag)
+    -- Init selection
+    _G[flag] = _G[flag] or skinNames[1]
+    local idx = table.find(skinNames, _G[flag]) or 1
+
+    -- Label
+    local lbl = Instance.new("TextLabel", sec)
+    lbl.Text               = label
+    lbl.Font               = Enum.Font.Gotham
+    lbl.TextSize           = 15
+    lbl.TextColor3         = textCol
+    lbl.BackgroundTransparency = 1
+    lbl.Position           = UDim2.new(0, 18, 0, 10 + y)
+    lbl.Size               = UDim2.new(0, 100, 0, 24)
+    lbl.TextXAlignment     = Enum.TextXAlignment.Left
+
+    -- Picker button (anchored to right edge)
+    local btn = Instance.new("TextButton", sec)
+    btn.AnchorPoint        = Vector2.new(1, 0)
+    btn.Position           = UDim2.new(1, -40, 0, 45 + y)  -- 18px padding from right
+    btn.Size               = UDim2.new(0, 160, 0, 24)
+    btn.BackgroundColor3   = sectionCol
+    btn.BorderSizePixel    = 1
+    btn.Font               = Enum.Font.Gotham
+    btn.TextSize           = 15
+    btn.TextColor3         = textCol
+    btn.Text               = weaponSkins[_G[flag]].text
+
+    btn.MouseButton1Click:Connect(function()
+        idx = idx + 1
+        if idx > #skinNames then idx = 1 end
+        _G[flag] = skinNames[idx]
+        btn.Text = weaponSkins[_G[flag]].text
+    end)
+end
+
+
+local function addBoneSelector(sec, y)
+    local bones = {"Head","Torso","Left Arm","Right Arm","Left Leg","Right Leg"}
+    _G.SelectedBone = _G.SelectedBone or "Head"
+    local boneLbl = Instance.new("TextLabel", sec)
+    boneLbl.Text = "Aim Bone:"
+    boneLbl.Font = Enum.Font.Gotham
+    boneLbl.TextSize = 15
+    boneLbl.TextColor3 = textCol
+    boneLbl.BackgroundTransparency = 1
+    boneLbl.Position = UDim2.new(0,18,0,160+y)
+    boneLbl.Size = UDim2.new(1,-36,0,20)
+    boneLbl.TextXAlignment = Enum.TextXAlignment.Left
+
+    local btnW, btnH = 80, 30
+    local startX, startY = 18, 190+y
+    for i, bone in ipairs(bones) do
+        local col = ((i-1)%2)
+        local row = math.floor((i-1)/2)
+        local b = Instance.new("TextButton", sec)
+        b.Text = bone
+        b.Font = Enum.Font.GothamBold
+        b.TextSize = 14
+        b.Size = UDim2.new(0,btnW,0,btnH)
+        b.Position = UDim2.new(0, startX+col*(btnW+10), 0, startY+row*(btnH+7))
+        b.BackgroundColor3 = (_G.SelectedBone == bone and accent or sectionCol)
+        b.TextColor3 = (_G.SelectedBone == bone and bgCol or textCol)
+        b.BorderSizePixel = 0
+        b.AutoButtonColor = true
+        b.MouseButton1Click:Connect(function()
+            _G.SelectedBone = bone
+            for _,child in ipairs(sec:GetChildren()) do
+                if child:IsA("TextButton") and table.find(bones, child.Text) then
+                    child.BackgroundColor3 = sectionCol
+                    child.TextColor3 = textCol
+                end
+            end
+            b.BackgroundColor3 = accent
+            b.TextColor3 = bgCol
+        end)
+    end
+end
+
+local function addHitboxExtender(sec, y)
+    addToggle(sec, "Hitbox Extender", y, "HitboxEnabled")
+    addSlider(sec, "Hitbox Size", y + 34, 5, 60, _G.HeadSize or 20, "HeadSize")
+end
+
+----------------------------------------------------------
+-- Tab Data & Layout
+----------------------------------------------------------
+local tabData = {
+    [1] = { -- RAGE
+        {title="AIMBOT", items=function(sec)
+            addToggle(sec, "Silent Aim", 0, "SilentAimEnabled")
+            addSlider(sec, "FOV Radius", 34, 20, 300, _G.FOVRadius or 100, "FOVRadius")
+            addToggle(sec, "Wall-Bang", 40, "WallbangEnabled")
+            addBoneSelector(sec, 0)
+        end},
+        {title="EXPLOITS", items=function(sec)
+        addToggle(sec, "Rapid Fire", 0, "RapidFireEnabled")
+        addToggle(sec, "Infinite Ammo", 34, "InfiniteAmmoEnabled")
+        addToggle(sec, "Spin Bot", 68, "SpinBotEnabled")
+        end},
+        {title="HITBOX", items=function(sec)
+            addHitboxExtender(sec, 0)
+        end}
+    },
+    [2] = { -- LEGIT
+        {title="LEGIT AIMBOT", items=function(sec)
+            addToggle(sec, "Cam Aimbot", 0, "LegitAimbotEnabled")
+            addToggle(sec, "Mouse Aimbot", 38, "MouseAimbotEnabled")
+            addSlider(sec, "FOV", 80, 5, 180, _G.LegitAimbotFOV or 35, "LegitAimbotFOV")
+            addSlider(sec, "Smoothness", 130, 1, 30, _G.LegitAimbotSmooth or 10, "LegitAimbotSmooth")
+            addToggle(sec, "Show FOV", 75, "LegitAimbotShowFOV")
+            addKeyPicker(sec, "Aim Key", 260, "LegitAimbotKey", "LegitAimbotKeyIdx")
+        end},
+        {title="TRIGGERBOT", items=function(sec)
+            addToggle(sec, "Triggerbot", 0, "TriggerbotEnabled")
+            addSlider(sec, "Trigger Delay (ms)", 50, 0, 200, _G.TriggerbotDelay or 50, "TriggerbotDelay")
+            addKeyPicker(sec, "Trigger Key", 92, "TriggerbotKey", "TriggerbotKeyIdx")
+        end}
+    },
+    [3] = { -- VISUALS
+        {title="ESP", items=function(sec)
+            addToggle(sec, "Highlight ESP", 0, "HighlightEnabled")
+            addToggle(sec, "Tracer ESP", 34, "TracerEnabled")
+            addToggle(sec, "Skeleton ESP", 68, "SkeletonEnabled")
+            addToggle(sec, "Corner ESP", 102, "CornerBoxEnabled")
+        end}
+    },
+    [4] = { -- MISC
+        {title="WORLD MODS", items=function(sec)
+            addColorPicker(sec, "Sky Color", 34, "SkyColor", Color3.new(0,0,0))
+            addColorPicker(sec, "Fog Color", 68, "FogColor", Color3.new(1,1,1))
+            addSlider(sec, "Fog Start", 50, 0, 1000, _G.FogStart or 0, "FogStart")
+            addSlider(sec, "Fog End", 136, 100, 100000, _G.FogEnd or 100000, "FogEnd")
+        end}
+    },
+    [5] = { -- MISC
+        {title="SKINS", items=function(sec)
+            addWeaponSkinPicker(sec, "Skin Changer", 40, "SelectedWeaponSkin")
+        end},
+    },
+}
+
+local function renderTab(i)
+    clearSections()
+    for idx, btn in ipairs(btns) do
+        btn.TextColor3 = (idx == i and accent or subText)
+    end
+    local data = tabData[i] or {}
+    for j, grp in ipairs(data) do
+        local sec = makeSection(panel, grp.title, j, #data)
+        grp.items(sec)
+    end
+end
+
+main:GetPropertyChangedSignal("AbsoluteSize"):Connect(function() renderTab(current) end)
+panel:GetPropertyChangedSignal("AbsoluteSize"):Connect(function() renderTab(current) end)
+for idx, btn in ipairs(btns) do
+    btn.MouseButton1Click:Connect(function() current = idx; renderTab(idx) end)
+end
+renderTab(current)
+
+-- UI Dragging
+local dragging, dragStart, origPos
+top.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = i.Position
+        origPos = main.Position
+        i.Changed:Connect(function() if i.UserInputState == Enum.UserInputState.End then dragging = false end end)
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(i)
+    if dragging and i.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = i.Position - dragStart
+        main.Position = UDim2.new(origPos.X.Scale, origPos.X.Offset+delta.X, origPos.Y.Scale, origPos.Y.Offset+delta.Y)
+    end
+end)
